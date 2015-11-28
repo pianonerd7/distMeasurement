@@ -1,13 +1,14 @@
 import csv
 
-class Trace :
+def main():
     my_list = list();
     
-    with open('Destinations.csv', "r") as f:
-        my_list.insert(f.readline())
+    with open("Destinations.csv") as file:
+    	my_list.append(file.read().splitlines())
 
     for s in my_list:
         print s
 
-    print len(my_list)
-    print "hi"
+
+if __name__ == '__main__':
+    main()
