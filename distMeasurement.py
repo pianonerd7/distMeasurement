@@ -66,8 +66,8 @@ def prob(host, ttl=30):
 	return address, round((end_prob_time - start_prob_time) *1000)
 
 def print_results(host):
-
-	host_ip = socket.gethostbyname(host)
+	print host
+	host_ip = socket.gethostbyname(str(host))
 	var = get_hops(host_ip)
 
 	print 'Reaching %s' % (host)
@@ -75,16 +75,16 @@ def print_results(host):
 	print 'The RTT is %s ms \n' % (var[1])
 
 def main():
-    my_list = list()
-    
-    with open("Destinations.csv") as file:
-    	for line in file:
-    	    my_list.append(str(line))
+	my_list = list()
 
-    #for host in my_list:
-    for host in ['ebay.com', 'amazon.cn']:
-    	print host
-    	print_results(host)
+	with open("Destinations.csv") as file:
+		for line in file:
+			my_list.append(str(line).strip('\n'))
+
+	print my_list
+
+	for host in my_list:
+		print_results(str(host))
 
 if __name__ == '__main__':
-    main()
+	main()
