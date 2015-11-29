@@ -16,7 +16,7 @@ def get_hops(host):
 			break
 		else :
 			temp_ttl = (high+low)/2
-		hops, time = prob(host, temp_ttl)
+		hops, time = probe(host, temp_ttl)
 
 		if hops == None:
 			high = temp_ttl
@@ -28,15 +28,15 @@ def get_hops(host):
 	return low, time
 
 
-def prob(host, ttl=30):
+def probe(host, ttl=30):
 	sending_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.getprotobyname('udp'))
 	receiving_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.getprotobyname('icmp'))
 
 	sending_socket.setsockopt(socket.SOL_IP, socket.IP_TTL, ttl)
 	receiving_socket.bind(('', PORT_NUM))
 	receiving_socket.settimeout(3)
-	start_prob_time = time.time()
-	end_prob_time = time.time()+3 #3 is the timeout
+	start_probe_time = time.time()
+	end_probe_time = time.time()+3 #3 is the timeout
 	sending_socket.sendto('', (host, PORT_NUM))
 	data = None
 	address = None
@@ -45,7 +45,7 @@ def prob(host, ttl=30):
 	try:
 		data, address = receiving_socket.recvfrom(512)
 		address = address[0]
-		end_prob_time = time.time()
+		end_probe_time = time.time()
 
 		try:
 			name = socket.gethostbyaddr(address)
@@ -63,7 +63,7 @@ def prob(host, ttl=30):
 	finally:
 		sending_socket.close()
 		receiving_socket.close()
-	return address, round((end_prob_time - start_prob_time) *1000)
+	return address, round((end_probe_time - start_probe_time) *1000)
 
 def print_results(host):
 	print host
@@ -77,7 +77,7 @@ def print_results(host):
 def main():
 	my_list = list()
 
-	with open("Destinations.csv") as file:
+	with open("Targets.txt") as file:
 		for line in file:
 			my_list.append(str(line).strip('\n'))
 
