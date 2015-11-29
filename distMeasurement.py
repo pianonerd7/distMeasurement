@@ -12,20 +12,23 @@ def get_hops(host):
 	time = 0
 
 	while low < high:
-
-		temp_ttl = (high+low)/2
+		if temp_ttl == (high+low)/2:
+			break
+		else :
+			temp_ttl = (high+low)/2
 		hops, time = prob(host, temp_ttl)
 
-		if hops.find(host) != -1:
-			return temp_ttl, time
-		elif hops == None:
+		if hops == None:
 			high = temp_ttl
+		elif hops.find(host) != -1:
+			return temp_ttl, time
 		else:
 			low = temp_ttl
 
 	return low, time
 
-def prob(host, ttl):
+
+def prob(host, ttl=30):
 	sending_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.getprotobyname('udp'))
 	receiving_socket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.getprotobyname('icmp'))
 
@@ -35,9 +38,9 @@ def prob(host, ttl):
 	start_prob_time = time.time()
 	end_prob_time = time.time()+3 #3 is the timeout
 	sending_socket.sendto('', (host, PORT_NUM))
-	data = ''
-	address = ''
-	name = ''
+	data = None
+	address = None
+	name = None
 
 	try:
 		data, address = receiving_socket.recvfrom(512)
@@ -69,7 +72,7 @@ def print_results(host):
 
 	print 'Reaching %s' % (host)
 	print 'The number of router hops is %s' % (var[0])
-	print 'The RTT is %s \n' % (var[1])
+	print 'The RTT is %s ms \n' % (var[1])
 
 def main():
     my_list = list()
@@ -79,8 +82,8 @@ def main():
     	    my_list.append(str(line))
 
     #for host in my_list:
-    for host in ['google.com', 'amazon.com', 'case.edu']:
-    	#print host
+    for host in ['ebay.com', 'amazon.cn']:
+    	print host
     	print_results(host)
 
 if __name__ == '__main__':
