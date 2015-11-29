@@ -16,8 +16,8 @@ def get_hops(host):
 		temp_ttl = (high+low)/2
 		hops, time = prob(host, temp_ttl)
 
-		if current.find(host) != -1:
-			return temp_ttl
+		if hops.find(host) != -1:
+			return temp_ttl, time
 		elif hops == None:
 			high = temp_ttl
 		else:
@@ -33,11 +33,11 @@ def prob(host, ttl):
 	receiving_socket.bind(('', PORT_NUM))
 	receiving_socket.settimeout(3)
 	start_prob_time = time.time()
+	end_prob_time = time.time()+3 #3 is the timeout
 	sending_socket.sendto('', (host, PORT_NUM))
 	data = ''
 	address = ''
 	name = ''
-	end_prob_time = time.time()+3 #3 is the timeout
 
 	try:
 		data, address = receiving_socket.recvfrom(512)
@@ -60,29 +60,26 @@ def prob(host, ttl):
 	finally:
 		sending_socket.close()
 		receiving_socket.close()
-	return address, round((start_prob_time - end_prob_time))
+	return address, round((end_prob_time - start_prob_time)*1000)
 
 def print_results(host):
 
-	hops = 0
-	time = 0
-	print host
 	host_ip = socket.gethostbyname(host)
-	print host_ip
-	hops, time = get_hops(host_ip)
+	var = get_hops(host_ip)
 
 	print 'Reaching %s' % (host)
-	print 'The number of router hops is %s' % (hops)
-	print 'The RTT is %s \n' % (time)
+	print 'The number of router hops is %s' % (var[0])
+	print 'The RTT is %s \n' % (var[1])
 
 def main():
     my_list = list()
     
     with open("Destinations.csv") as file:
     	for line in file:
-    	    my_list.append(line)
+    	    my_list.append(str(line))
 
-    for host in my_list:
+    #for host in my_list:
+    for host in ['google.com', 'amazon.com', 'case.edu']:
     	#print host
     	print_results(host)
 
