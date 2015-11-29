@@ -45,7 +45,7 @@ def prob(host, ttl=30):
 	try:
 		data, address = receiving_socket.recvfrom(512)
 		address = address[0]
-		end = time.time()
+		end_prob_time = time.time()
 
 		try:
 			name = socket.gethostbyaddr(address)
@@ -63,7 +63,7 @@ def prob(host, ttl=30):
 	finally:
 		sending_socket.close()
 		receiving_socket.close()
-	return address, round((end_prob_time - start_prob_time)*1000)
+	return address, round((end_prob_time - start_prob_time) *1000)
 
 def print_results(host):
 
